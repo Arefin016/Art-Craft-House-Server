@@ -46,11 +46,44 @@ async function run() {
     })
 
 
+    //Send the data from server for updated
+    app.get('/addCrafts/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await craftCollection.findOne(query);
+      res.send(result);
+    })
+
+
     //send add craft item to the server
     app.post('/addCrafts', async(req, res) => {
       const newCraftItem = req.body;
       console.log(newCraftItem);
       const result = await craftCollection.insertOne(newCraftItem);
+      res.send(result);
+    })
+
+    //Modified the data from the server
+    app.put('/addCrafts/:id', async(req, res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const options = {upsert: true};
+      const updateCraftItem = req.body;
+
+      const craftItem = {
+        $set: {
+          photo:updateCraftItem.name,
+          item:updateCraftItem.item,
+           subcategory:updateCraftItem.subcategory,
+            short:updateCraftItem.short,
+             price:updateCraftItem.price,
+              rating:updateCraftItem.rating,
+               customization:updateCraftItem.customization,
+                processing:updateCraftItem.processing,
+                 stock:updateCraftItem.stock,
+        }
+      }
+      const result = await craftCollection.updateOne(filter, craftItem, options);
       res.send(result);
     })
 
