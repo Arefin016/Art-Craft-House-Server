@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -27,6 +27,16 @@ async function run() {
     // await client.connect();
 
     const craftCollection = client.db("craftDB").collection('craft');
+    const subCategoryCollection = client.db("craftDB").collection('subCategoryName');
+
+    //show the data from database
+    app.get('/subCategories', async(req, res) => {
+      const cursor = subCategoryCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+
 
     //show the data from server 
     app.get('/addCrafts', async(req, res) => {
@@ -41,6 +51,14 @@ async function run() {
       const newCraftItem = req.body;
       console.log(newCraftItem);
       const result = await craftCollection.insertOne(newCraftItem);
+      res.send(result);
+    })
+
+    //Delete from the server
+    app.delete('/addCrafts/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await craftCollection.deleteOne(query);
       res.send(result);
     })
 
