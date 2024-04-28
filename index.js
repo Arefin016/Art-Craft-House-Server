@@ -28,10 +28,19 @@ async function run() {
 
     const craftCollection = client.db("craftDB").collection('craft');
     const subCategoryCollection = client.db("craftDB").collection('subCategoryName');
+    const secondSubcategoryColletion = client.db("craftDB").collection('secondCategoryName');
+
 
     //show the data from database
     app.get('/subCategories', async(req, res) => {
       const cursor = subCategoryCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+    //show the data from the database
+    app.get('/secondSubCategory', async(req, res) =>{
+      const cursor = secondSubcategoryColletion.find();
       const result = await cursor.toArray();
       res.send(result);
     })
